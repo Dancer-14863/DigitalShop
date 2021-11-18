@@ -8,10 +8,19 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
     ports:
-      - "9000:5432"
+      - "5432"
     restart: always
     volumes:
       - database-data:/var/lib/postgresql/data/
+  
+  base-gateway:
+    build:
+      context: ./APIGateways/BaseGateway
+      dockerfile: Dockerfile
+    ports:
+      - "5000:80"
+    depends_on:
+      - user-api
 
   user-api:
     build:
@@ -20,7 +29,7 @@ services:
     environment:
       - ConnectionString=Host=postgres_database;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};
     ports:
-      - "5000:80"
+      - "80"
     depends_on:
       - postgres_database
 
