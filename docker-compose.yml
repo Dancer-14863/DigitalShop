@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   postgres_database:
-    image: postgres:latest
+    image: postgres:14.1
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
@@ -21,6 +21,20 @@ services:
       - "5000:80"
     depends_on:
       - user-api
+  
+  auth-api:
+    build:
+      context: ./Services/Auth/Auth.API
+      dockerfile: Dockerfile
+    environment:
+      - ConnectionString=Host=postgres_database;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};
+      - Jwt_Secret=${JWT_SECRET}
+      - Jwt_Issuer=auth-api
+      - Jwt_Timeout=${JWT_TIMEOUT}
+    ports:
+      - "80"
+    depends_on:
+      - postgres_database
 
   user-api:
     build:
@@ -28,10 +42,14 @@ services:
       dockerfile: Dockerfile
     environment:
       - ConnectionString=Host=postgres_database;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};
+      - Jwt_Secret=${JWT_SECRET}
+      - Jwt_Issuer=auth-api
+      - Jwt_Timeout=${JWT_TIMEOUT}
     ports:
       - "80"
     depends_on:
       - postgres_database
+      - auth-api
 
 volumes:
   database-data:
