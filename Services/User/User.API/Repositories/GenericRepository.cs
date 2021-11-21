@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using User.API.Data;
@@ -14,6 +15,11 @@ namespace User.API.Repositories
         {
             _context = context;
             _table = _context.Set<T>();
+        }
+        
+        public async Task<int> Count()
+        {
+            return await _table.CountAsync();
         }
 
         public async Task<T?> Get(int id)

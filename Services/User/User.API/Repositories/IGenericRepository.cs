@@ -8,6 +8,7 @@ namespace User.API.Repositories
      */
     public interface IGenericRepository<T> where T : class
     {
+        Task<int> Count();
         Task<T?> Get(int id);
         Task<IEnumerable<T>> GetAll();
         Task<T> Add(T entity);
