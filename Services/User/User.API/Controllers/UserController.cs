@@ -78,6 +78,8 @@ namespace User.API.Controllers
 
             if (!ModelState.IsValid) return BadRequest(ModelState);
             _mapper.Map(updateAccount, account);
+            account.Role = await _roleRepository.Get(account.RoleId);
+            account.UpdatedAt = DateTime.Now;
             await _accountRepository.Update(account);
             return Ok(_mapper.Map<GetAccountDto>(account));
         }
@@ -99,6 +101,8 @@ namespace User.API.Controllers
             // id gets lost when mapping, so we need to set it manually
             account.Id = id;
 
+            account.Role = await _roleRepository.Get(account.RoleId);
+            account.UpdatedAt = DateTime.Now;
             await _accountRepository.Update(account);
             return Ok(_mapper.Map<GetAccountDto>(account));
         }
