@@ -65,6 +65,22 @@ services:
     depends_on:
       - postgres_database
       - auth-api
+    
+  basket-api:
+    build:
+      context: ./Services/Basket/Basket.API
+      dockerfile: Dockerfile
+    environment:
+      - ConnectionString=Host=postgres_database;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};
+      - Jwt_Secret=${JWT_SECRET}
+      - Jwt_Issuer=auth-api
+      - Jwt_Timeout=${JWT_TIMEOUT}
+    ports:
+      - "80"
+    depends_on:
+      - postgres_database
+      - auth-api
+        
 
 volumes:
   database-data:
